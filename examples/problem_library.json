@@ -1,0 +1,123 @@
+[
+  {
+    "id": "dtu_prereq",
+    "name": "Bài toán Điều kiện môn học ĐH Duy Tân (SCA - DTU)",
+    "category": "real_life",
+    "description": "Kiểm tra điều kiện tiên quyết môn Cấu trúc dữ liệu từ các môn Lập trình cơ bản và Toán rời rạc.",
+    "natural_language": "Nếu sinh viên hoàn thành Lập trình cơ bản (P) và Toán rời rạc (Q) thì đủ điều kiện học Cấu trúc dữ liệu (R). Sinh viên đã hoàn thành cả Lập trình cơ bản và Toán rời rạc. Hỏi sinh viên có chắc chắn đủ điều kiện học Cấu trúc dữ liệu không?",
+    "sequent": "(P & Q) -> R, P & Q |- R",
+    "variables": {
+      "P": "Hoàn thành môn Lập trình cơ bản",
+      "Q": "Hoàn thành môn Toán rời rạc",
+      "R": "Đủ điều kiện đăng ký học môn Cấu trúc dữ liệu"
+    },
+    "expected_result": true
+  },
+  {
+    "id": "detective_puzzle",
+    "name": "Vụ án điều tra ngoại phạm (Detective Logic)",
+    "category": "real_life",
+    "description": "Suy luận logic tìm thủ phạm dựa trên chứng cứ ngoại phạm và quan hệ giữa các nghi phạm.",
+    "natural_language": "Nếu nghi phạm A ở hiện trường (A) thì B có chứng cứ ngoại phạm (B). Nhưng B không có chứng cứ ngoại phạm (~B). Biết rằng hoặc A hoặc C là kẻ chủ mưu (A | C). Hỏi C có phải là kẻ chủ mưu không?",
+    "sequent": "A -> B, ~B, A | C |- C",
+    "variables": {
+      "A": "Nghi phạm A có mặt ở hiện trường",
+      "B": "Nghi phạm B có bằng chứng ngoại phạm vững chắc",
+      "C": "Nghi phạm C là kẻ chủ mưu"
+    },
+    "expected_result": true
+  },
+  {
+    "id": "fallacy_network",
+    "name": "Bẫy Ngụy biện: Chẩn đoán sự cố mạng (Logic Fallacy)",
+    "category": "real_life",
+    "description": "Minh họa hệ thống phát hiện NGỤY BIỆN KHẲNG ĐỊNH HỆ QUẢ và trích xuất phản ví dụ.",
+    "natural_language": "Nếu máy chủ bị tấn công DDoS (D) hoặc cáp mạng đứt (C) thì mạng bị mất kết nối (L). Mạng thực sự bị mất kết nối (L) và cáp không đứt (~C). Có thể khẳng định chắc chắn máy chủ bị DDoS hay không?",
+    "sequent": "(D | C) -> L, L, ~C |- D",
+    "variables": {
+      "D": "Máy chủ bị tấn công DDoS",
+      "C": "Cáp mạng trung tâm bị đứt vật lý",
+      "L": "Hệ thống bị mất kết nối mạng"
+    },
+    "expected_result": false,
+    "note": "Hệ thống sẽ chỉ ra ngụy biện: Mất kết nối (L) có thể do cúp điện hoặc nguyên nhân khác dù không có DDoS."
+  },
+  {
+    "id": "modus_ponens",
+    "name": "Quy tắc Khẳng định (Modus Ponens)",
+    "category": "classic",
+    "description": "Từ P và P -> Q, suy ra Q.",
+    "natural_language": "Nếu trời mưa thì đường ướt. Trời mưa. Vậy đường ướt.",
+    "sequent": "P, P -> Q |- Q",
+    "variables": {
+      "P": "Tiền đề P",
+      "Q": "Kết luận Q"
+    },
+    "expected_result": true
+  },
+  {
+    "id": "modus_tollens",
+    "name": "Quy tắc Phủ định (Modus Tollens)",
+    "category": "classic",
+    "description": "Từ ~Q và P -> Q, suy ra ~P.",
+    "natural_language": "Nếu là chim thì có cánh. Vật này không có cánh. Vậy không phải là chim.",
+    "sequent": "~Q, P -> Q |- ~P",
+    "variables": {
+      "P": "Mệnh đề P",
+      "Q": "Mệnh đề Q"
+    },
+    "expected_result": true
+  },
+  {
+    "id": "hypothetical_syllogism",
+    "name": "Tam đoạn luận Giả thiết (Bắc cầu kéo theo)",
+    "category": "classic",
+    "description": "Từ P -> Q và Q -> R, suy ra P -> R.",
+    "natural_language": "Nếu chăm chỉ (P) thì hiểu bài (Q). Nếu hiểu bài (Q) thì qua môn (R). Vậy nếu chăm chỉ thì qua môn.",
+    "sequent": "P -> Q, Q -> R |- P -> R",
+    "variables": {
+      "P": "Chăm chỉ học tập",
+      "Q": "Hiểu bài sâu sắc",
+      "R": "Đạt điểm cao qua môn"
+    },
+    "expected_result": true
+  },
+  {
+    "id": "de_morgan",
+    "name": "Định luật De Morgan hai chiều (Tương đương)",
+    "category": "classic",
+    "description": "Chứng minh hằng đúng: ~(P ∧ Q) ↔ (¬P ∨ ¬Q).",
+    "natural_language": "Phủ định của phép hội tương đương với phép tuyển các phủ định.",
+    "sequent": "|- ~(P & Q) <-> (~P | ~Q)",
+    "variables": {
+      "P": "Mệnh đề P",
+      "Q": "Mệnh đề Q"
+    },
+    "expected_result": true
+  },
+  {
+    "id": "excluded_middle",
+    "name": "Quy luật Bài trung (Law of Excluded Middle)",
+    "category": "classic",
+    "description": "Chứng minh hằng đúng: P ∨ ¬P luôn luôn đúng trong logic cổ điển.",
+    "natural_language": "Một mệnh đề hoặc là Đúng hoặc là Sai, không có trường hợp thứ ba.",
+    "sequent": "|- P | ~P",
+    "variables": {
+      "P": "Mệnh đề P"
+    },
+    "expected_result": true
+  },
+  {
+    "id": "explosion_principle",
+    "name": "Nguyên lý Bùng nổ (Ex Falso Quodlibet)",
+    "category": "classic",
+    "description": "Từ một mâu thuẫn (P ∧ ¬P), có thể suy ra bất kỳ mệnh đề vô lý nào (Q).",
+    "natural_language": "Nếu vừa có P vừa có không-P thì bất kỳ điều gì cũng đúng.",
+    "sequent": "P, ~P |- Q",
+    "variables": {
+      "P": "Mệnh đề P",
+      "Q": "Mệnh đề Q bất kỳ"
+    },
+    "expected_result": true
+  }
+]

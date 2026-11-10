@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS417 - Chứng Minh Định Lý Tự Động (Giải thuật Vương Hạo) | ĐH Duy Tân</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX for rendering mathematical formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-brand">
+            <div class="logo-badge"><i class="fa-solid fa-graduation-cap"></i> DTU - SCA</div>
+            <div class="header-titles">
+                <h1>ĐỒ ÁN TRÍ TUỆ NHÂN TẠO (CS417)</h1>
+                <p>Hệ thống Chứng minh Định lý Tự động bằng <strong>Giải thuật Vương Hạo (Hao Wang 1960)</strong></p>
+            </div>
+        </div>
+        <div class="header-meta">
+            <span class="badge"><i class="fa-solid fa-brain"></i> Automated Reasoning</span>
+            <span class="badge badge-primary"><i class="fa-solid fa-superscript"></i> Sequent Calculus</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar: Bảng điều khiển & Thư viện bài toán -->
+        <aside class="sidebar">
+            <!-- Thư viện bài toán mẫu -->
+            <div class="panel-card">
+                <h3><i class="fa-solid fa-book-bookmark"></i> Thư viện bài toán mẫu</h3>
+                <div class="form-group">
+                    <label for="exampleSelect">Chọn kịch bản kiểm thử:</label>
+                    <select id="exampleSelect" class="form-control" onchange="onSelectExample()">
+                        <option value="">-- Chọn bài toán mẫu --</option>
+                    </select>
+                </div>
+
+                <div id="naturalLanguageBox" class="natural-box" style="display: none;">
+                    <div class="natural-title"><i class="fa-solid fa-comment-dots"></i> Phát biểu thực tế:</div>
+                    <div id="naturalText" class="natural-text"></div>
+                    <div id="variableMappings" class="var-list"></div>
+                </div>
+            </div>
+
+            <!-- Bàn phím ký hiệu logic ảo -->
+            <div class="panel-card">
+                <h3><i class="fa-solid fa-keyboard"></i> Bàn phím ký hiệu Logic</h3>
+                <div class="sym-keyboard">
+                    <button class="sym-btn" onclick="insertSymbol('¬')" title="Phủ định (NOT)">¬</button>
+                    <button class="sym-btn" onclick="insertSymbol('∧')" title="Phép hội (AND)">∧</button>
+                    <button class="sym-btn" onclick="insertSymbol('∨')" title="Phép tuyển (OR)">∨</button>
+                    <button class="sym-btn" onclick="insertSymbol('→')" title="Phép kéo theo (IMPLIES)">→</button>
+                    <button class="sym-btn" onclick="insertSymbol('↔')" title="Phép tương đương (IFF)">↔</button>
+                    <button class="sym-btn" onclick="insertSymbol(' ⊢ ')" title="Dấu suy kéo Vương Hạo (TURNSTILE)">⊢</button>
+                    <button class="sym-btn" onclick="insertSymbol('(')">(</button>
+                    <button class="sym-btn" onclick="insertSymbol(')')">)</button>
+                    <button class="sym-btn" onclick="insertSymbol(', ')">, </button>
+                </div>
+                <small class="text-muted" style="font-size: 0.75rem; margin-top: 0.4rem; display: block;">
+                    Hỗ trợ phím gõ nhanh: <code>~</code> (phủ định), <code>&</code> (hội), <code>|</code> (tuyển), <code>-></code> (kéo theo), <code><-></code> (tương đương), <code>|-</code> (suy kéo).
+                </small>
+            </div>
+
+            <!-- Khung nhập liệu định lý -->
+            <div class="panel-card">
+                <h3><i class="fa-solid fa-square-root-variable"></i> Nhập biểu thức Vương Hạo</h3>
+                <div class="form-group">
+                    <label for="sequentInput">Dạng tổng quát: <code>Γ ⊢ Δ</code> (Tiền đề ⊢ Kết luận):</label>
+                    <input type="text" id="sequentInput" class="form-control formula-input" 
+                           placeholder="VD: (P & Q) -> R, P & Q |- R" 
+                           value="(P ∧ Q) → R, P ∧ Q ⊢ R">
+                </div>
+
+                <div class="form-actions">
+                    <button id="proveBtn" class="btn btn-primary btn-block" onclick="runProver()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> CHỨNG MINH ĐỊNH LÝ
+                    </button>
+                    <button id="stepBtn" class="btn btn-secondary btn-block" onclick="startStepByStep()">
+                        <i class="fa-solid fa-forward-step"></i> Mô phỏng từng bước
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quy tắc Vương Hạo tra cứu nhanh -->
+            <div class="panel-card rules-guide">
+                <h3><i class="fa-solid fa-circle-info"></i> Quy tắc biến đổi Vương Hạo</h3>
+                <div class="rule-mini-list">
+                    <div><code>¬L:</code> Γ, ¬A ⊢ Δ  ⟹  Γ ⊢ Δ, A</div>
+                    <div><code>¬R:</code> Γ ⊢ Δ, ¬A  ⟹  Γ, A ⊢ Δ</div>
+                    <div><code>∧L:</code> Γ, A ∧ B ⊢ Δ  ⟹  Γ, A, B ⊢ Δ</div>
+                    <div><code>∧R:</code> Γ ⊢ Δ, A ∧ B  ⟹  (Γ ⊢ Δ, A) & (Γ ⊢ Δ, B)</div>
+                    <div><code>∨L:</code> Γ, A ∨ B ⊢ Δ  ⟹  (Γ, A ⊢ Δ) & (Γ, B ⊢ Δ)</div>
+                    <div><code>∨R:</code> Γ ⊢ Δ, A ∨ B  ⟹  Γ ⊢ Δ, A, B</div>
+                    <div><code>→L:</code> Γ, A → B ⊢ Δ  ⟹  (Γ ⊢ Δ, A) & (Γ, B ⊢ Δ)</div>
+                    <div><code>→R:</code> Γ ⊢ Δ, A → B  ⟹  Γ, A ⊢ Δ, B</div>
+                    <div style="color: #15803d; font-weight: bold; margin-top: 0.3rem;">
+                        <code>Axiom:</code> Γ ∩ Δ ≠ ∅ (Tồn tại cùng biến ở 2 vế)
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area: Kết quả chứng minh & Cây dẫn xuất -->
+        <main class="content-area">
+            <!-- Thẻ Kết Luận Tổng Quan -->
+            <div class="card result-banner-card" id="resultBanner">
+                <div class="banner-content">
+                    <div class="banner-icon" id="bannerIcon">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
+                    <div class="banner-details">
+                        <div class="banner-title" id="bannerTitle">Sẵn sàng chứng minh</div>
+                        <div class="banner-subtitle" id="bannerSubtitle">Nhập biểu thức logic hoặc chọn từ thư viện mẫu và bấm "CHỨNG MINH ĐỊNH LÝ".</div>
+                    </div>
+                </div>
+                <div class="banner-stats" id="bannerStats" style="display: none;">
+                    <div class="stat-pill"><span id="statNodes">0</span> nút cây</div>
+                    <div class="stat-pill"><span id="statAxioms">0</span> nhánh tiên đề</div>
+                    <div class="stat-pill"><span id="statLeaves">0</span> tổng số lá</div>
+                </div>
+            </div>
+
+            <!-- Bảng phân tích Phản ví dụ (chỉ hiện khi Định lý SAI) -->
+            <div class="card counter-card" id="counterCard" style="display: none;">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-triangle-exclamation"></i> Phân tích Phản ví dụ (Counter-Model Falsification)</h2>
+                    <span class="badge-falsified">LÀM SAI ĐỊNH LÝ</span>
+                </div>
+                <div class="counter-body" id="counterBody">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+
+            <!-- Trực quan hóa Cây Chứng Minh (Visual Proof Tree) -->
+            <div class="card tree-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-diagram-project"></i> Cây dẫn xuất giải thuật Vương Hạo (Proof Tree)</h2>
+                    <div class="tree-controls">
+                        <button class="btn-sm" onclick="expandAllNodes()"><i class="fa-solid fa-expand"></i> Mở rộng hết</button>
+                        <button class="btn-sm" onclick="exportLaTeX()"><i class="fa-solid fa-code"></i> Sao chép LaTeX</button>
+                    </div>
+                </div>
+                <div id="treeContainer" class="tree-viewport">
+                    <div class="text-center text-muted" style="padding: 3rem;">
+                        <i class="fa-solid fa-folder-tree" style="font-size: 2.5rem; color: #94a3b8; margin-bottom: 0.5rem; display: block;"></i>
+                        Cây chứng minh sẽ được hiển thị trực quan tại đây sau khi thực hiện giải thuật.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nhật ký suy luận từng bước (Text Trace & Modus Ponens) -->
+            <div class="card trace-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-list-ol"></i> Tiến trình khử phép toán từng bước (Step-by-Step Trace)</h2>
+                </div>
+                <div id="traceLog" class="trace-log">
+                    <div class="text-center text-muted" style="padding: 1.5rem;">Chưa có dữ liệu tiến trình.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
